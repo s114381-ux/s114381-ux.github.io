@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測測你的多巴胺動物！(豪華版)</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'PingFang TC', 'Heiti TC', 'Microsoft JhengHei', sans-serif;
+        }
+
+        body {
+            /* 韓系低飽和淡粉色背景 + 細微條紋圖案 */
+            background-color: #FBF5F5;
+            background-image: linear-gradient(0deg, transparent 24%, #F5EBEB 25%, #F5EBEB 26%, transparent 27%, transparent 74%, #F5EBEB 75%, #F5EBEB 76%, transparent 77%), 
+                              linear-gradient(90deg, transparent 24%, #F5EBEB 25%, #F5EBEB 26%, transparent 27%, transparent 74%, #F5EBEB 75%, #F5EBEB 76%, transparent 77%);
+            background-size: 40px 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #5A4E4E;
+        }
+
+        .container {
+            background: #FFFFFF;
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid #EADBDB;
+            border-radius: 24px;
+            padding: 40px 25px 35px 25px;
+            box-shadow: 0 10px 30px rgba(185, 160, 160, 0.12);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 滿滿的韓系小貼紙裝飾區 */
+        .deco-sticker {
+            position: absolute;
+            font-size: 16px;
+            user-select: none;
+            opacity: 0.85;
+            filter: drop-shadow(1px 1px 0px rgba(220,200,200,0.5));
+        }
+        .ribbon-1 { top: 15px; left: 20px; font-size: 20px; }
+        .star-1 { top: 45px; right: 25px; color: #D4B2B6; }
+        .star-2 { top: 120px; left: 15px; color: #E5C3C6; font-size: 12px; }
+        .cherry-1 { bottom: 80px; right: 15px; font-size: 18px; }
+        .ribbon-2 { bottom: 20px; left: 25px; font-size: 18px; }
+        .star-3 { bottom: 130px; left: 25px; color: #D4B2B6; font-size: 14px; }
+
+        .badge {
+            display: inline-block;
+            background: #F5EBEB;
+            color: #A38285;
+            font-size: 11px;
+            padding: 4px 14px;
+            border-radius: 100px;
+            margin-bottom: 18px;
+            letter-spacing: 1.5px;
+            border: 1px solid #EDE2E3;
+            font-weight: 500;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4A3E3E;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            font-size: 13.5px;
+            color: #8A7A7A;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background: #E8C5C8;
+            color: #FFFFFF;
+            border: 1px solid #DFB5B9;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(232, 197, 200, 0.2);
+        }
+
+        .btn:hover {
+            background: #E1BABF;
+            box-shadow: 0 4px 14px rgba(232, 197, 200, 0.45);
+        }
+
+        /* 介面切換隱藏邏輯 */
+        .quiz-screen, .result-screen {
+            display: none;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 5px;
+            background: #F5EBEB;
+            border-radius: 100px;
+            margin-bottom: 35px;
+            overflow: hidden;
+            border: 1px solid #F0E4E4;
+        }
+
+        .progress-bar {
+            width: 16.6%;
+            height: 100%;
+            background: #E8C5C8;
+            transition: width 0.3s ease;
+            border-radius: 100px;
+        }
+
+        .question-num {
+            font-size: 12px;
+            color: #B5A4A5;
+            margin-bottom: 8px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .question-title {
+            font-size: 17.5px;
+            color: #4A3E3E;
+            margin-bottom: 35px;
+            line-height: 1.6;
+            font-weight: 600;
+        }
+
+        .option-btn {
+            display: block;
+            width: 100%;
+            background: #FFFFFF;
+            color: #6A5B5B;
+            border: 1px solid #EADBDB;
+            padding: 16px 20px;
+            border-radius: 14px;
+            font-size: 14px;
+            text-align: left;
+            margin-bottom: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1.5;
+        }
+
+        .option-btn:hover {
+            background: #FAF6F6;
+            border-color: #E8C5C8;
+            color: #4A3E3E;
+        }
+
+        /* 韓系人生四格拍貼框 */
+        .photo-strip {
+            background: #FAF6F6;
+            border: 1px solid #EADBDB;
+            padding: 24px 20px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .result-image-box {
+            width: 120px;
+            height: 120px;
+            background: #FFFFFF;
+            border: 1px solid #EADBDB;
+            border-radius: 50%;
+            margin: 0 auto 18px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 55px;
+            box-shadow: inset 0 2px 6px rgba(165,140,140,0.05);
+        }
+
+        .result-name {
+            font-size: 21px;
+            color: #4A3E3E;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .result-tag {
+            display: inline-block;
+            font-size: 12.5px;
+            color: #B59496;
+            background: #FFFFFF;
+            border: 1px solid #ECE2E2;
+            padding: 4px 14px;
+            border-radius: 100px;
+            margin-bottom: 22px;
+        }
+
+        .analysis-box {
+            text-align: left;
+            background: #FFFFFF;
+            border: 1px solid #EADBDB;
+            border-radius: 14px;
+            padding: 18px 16px;
+            margin-bottom: 16px;
+        }
+
+        .analysis-item {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #6A5B5B;
+        }
+        .analysis-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .analysis-item strong {
+            color: #4A3E3E;
+        }
+
+        .match-box {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .match-card {
+            flex: 1;
+            background: #FFFFFF;
+            border: 1px solid #ECE2E2;
+            padding: 12px 10px;
+            border-radius: 12px;
+            font-size: 12.5px;
+        }
+
+        .match-title {
+            color: #A68789;
+            margin-bottom: 5px;
+            font-size: 11.5px;
+            font-weight: 500;
+        }
+
+        .btn-secondary {
+            background: #FFFFFF;
+            color: #8A7A7A;
+            border: 1px solid #EADBDB;
+            margin-top: 12px;
+            box-shadow: none;
+        }
+        .btn-secondary:hover {
+            background: #FAF6F6;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 韓系文青小貼紙（蝴蝶結、星星、櫻桃、花朵） -->
+        <div class="deco-sticker ribbon-1">🎀</div>
+        <div class="deco-sticker star-1">✦</div>
+        <div class="deco-sticker star-2">★</div>
+        <div class="deco-sticker cherry-1">🍒</div>
+        <div class="deco-sticker ribbon-2">🎀</div>
+        <div class="deco-sticker star-3">✦</div>
+
+        <!-- 1. 開始畫面 -->
+        <div id="start-screen" class="start-screen">
+            <span class="badge">PERSONALITY QUIZ</span>
+            <h1>測測你的多巴胺動物！</h1>
+            <p class="subtitle">探索隱藏在你靈魂深處的社交原色<br>找到屬於你的可愛與開朗特質 ✨</p>
+            <button class="btn" onclick="startQuiz()">開始測試</button>
+        </div>
+
+        <!-- 2. 測試答題畫面 -->
+        <div id="quiz-screen" class="quiz-screen">
+            <div class="progress-bar-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="question-num" class="question-num">QUESTION 01</div>
+            <div id="question-title" class="question-title">題目載入中...</div>
+            <div id="options-container"></div>
+        </div>
+
+        <!-- 3. 結果畫面 -->
+        <div id="result-screen" class="result-screen">
+            <span class="badge">TEST RESULT</span>
+            
+            <div class="photo-strip">
+                <div id="result-emoji" class="result-image-box">🐶</div>
+                <div id="result-name" class="result-name">快樂小狗</div>
+                <div id="result-tag" class="result-tag">#外向開朗 #氛圍製造機</div>
+                
+                <div class="analysis-box">
+                    <div class="analysis-item">✦ <strong>核心特質：</strong><span id="desc-core">載入中...</span></div>
+                    <div class="analysis-item">✦ <strong>幸運小物：</strong><span id="desc-lucky">載入中...</span></div>
+                </div>
+
+                <div class="match-box">
+                    <div class="match-card">
+                        <div class="match-title">絕配夥伴 🐾</div>
+                        <strong id="match-best">療癒系水豚</strong>
+                    </div>
+                    <div class="match-card">
+                        <div class="match-title">保持距離 🎀</div>
+                        <strong id="match-worst">傲嬌貓咪</strong>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn" onclick="alert('卡片已模擬存入相簿！快截圖分享給朋友吧 🎀')">儲存結果卡片</button>
+            <button class="btn btn-secondary" onclick="restartQuiz()">重新測驗</button>
+        </div>
+    </div>
+
+    <script>
+        // 擴充到完整的 6 道情境題目
+        const questions = [
+            {
+                title: "週末午後，朋友突然提議去新開的韓系文青咖啡廳，你的反應是？",
+                options: [
+                    { text: "太棒了！立刻換衣服出門，順便拍一堆穿搭美照！", score: "extrovert" },
+                    { text: "雖然想去，但更想窩在床上看劇，委婉拒絕。", score: "cute" }
+                ]
+            },
+            {
+                title: "走在路上，突然有一隻超可愛的流浪貓對你喵喵叫，你會？",
+                options: [
+                    { text: "溫柔地蹲下來用軟綿綿的娃娃音跟牠對話，心都被融化了～", score: "cute" },
+                    { text: "熱情地呼喚周圍的朋友一起來看，並拍照發到 Threads 上分享！", score: "extrovert" }
+                ]
+            },
+            {
+                title: "在挑選日常文具或隨身小配件時，你更容易被哪種風格吸引？",
+                options: [
+                    { text: "色彩繽紛、多巴胺撞色，讓人一眼就能注意到的搶眼風格。", score: "extrovert" },
+                    { text: "低飽和度的馬卡龍色、圓滾滾又帶點笨拙感的療癒系插畫。", score: "cute" }
+                ]
+            },
+            {
+                title: "跟一群朋友去 KTV 唱歌，當包廂氣氛突然有點冷掉時，你會怎麼做？",
+                options: [
+                    { text: "主動點一首最嗨的歌熱舞切歌，把全場氣氛重新炒熱！", score: "extrovert" },
+                    { text: "默默在旁邊點好吃的拼盤，或者用亮晶晶的眼神為唱歌的人拍手。", score: "cute" }
+                ]
+            },
+            {
+                title: "收到朋友送的一份沒有特別節日原因的暖心小禮物，你通常會？",
+                options: [
+                    { text: "感動到發一整篇限時動態，外加一大堆愛心貼圖狂對朋友謝恩！", score: "extrovert" },
+                    { text: "害羞又開心地緊緊抱住禮物，並默默在心裡計畫下次要回送什麼。", score: "cute" }
+                ]
+            },
+            {
+                title: "如果可以擁有一項超能力，你最希望是哪一個？",
+                options: [
+                    { text: "能瞬間移動到世界任何一個熱鬧派對或景點，結交新朋友！", score: "extrovert" },
+                    { text: "能聽懂所有小動物說話，天天跟家裡的寵物聊天散步。", score: "cute" }
+                ]
+            }
+        ];
+
+        const results = {
+            extrovert: {
+                name: "快樂小狗",
+                emoji: "🐶",
+                tag: "#外向開朗 #氛圍製造機",
+                core: "社交能量爆棚，完全藏不住情緒！走到哪裡都是大家的快樂源泉，擁有源源不絕的活力與熱情。",
+                lucky: "多巴胺撞色配件、草莓氣泡水 🍓",
+                best: "療癒系水豚",
+                worst: "傲嬌貓咪"
+            },
+            cute: {
+                name: "療癒系水豚",
+                emoji: "🦦",
+                tag: "#可愛有趣 #情緒穩定",
+                core: "自帶一種慢半拍的呆萌幽默感。雖然比較被動内向，但待在你身邊就像喝了熱可可一樣溫暖療癒。",
+                lucky: "手作編織包、熱黑糖拿鐵 ☕",
+                best: "快樂小狗",
+                worst: "神祕狐狸"
+            }
+        };
+
+        let currentQuestionIndex = 0;
+        let scores = { extrovert: 0, cute: 0 };
+
+        function startQuiz() {
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('quiz-screen').style.display = 'block';
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestionIndex];
+            
+            // 更新題號與題目
+            document.getElementById('question-num').innerText = `QUESTION 0${currentQuestionIndex + 1}`;
+            document.getElementById('question-title').innerText = q.title;
+            
+            // 更新進度條
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => selectOption(opt.score);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(scoreType) {
+            scores[scoreType]++;
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+
+            // 計算結果 (看哪一項得分高)
+            let finalResultKey = scores.extrovert >= scores.cute ? 'extrovert' : 'cute';
+            const res = results[finalResultKey];
+
+            // 渲染畫面數據
+            document.getElementById('result-emoji').innerText = res.emoji;
+            document.getElementById('result-name').innerText = res.name;
+            document.getElementById('result-tag').innerText = res.tag;
+            document.getElementById('desc-core').innerText = res.core;
+            document.getElementById('desc-lucky').innerText = res.lucky;
+            document.getElementById('match-best').innerText = res.best;
+            document.getElementById('match-worst').innerText = res.worst;
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            scores = { extrovert: 0, cute: 0 };
+            document.getElementById('result-screen').style.display = 'none';
+            document.getElementById('start-screen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
