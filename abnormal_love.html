@@ -64,20 +64,20 @@
         .ritual-banner::after { right: 30px; }
         .banner-icon { color: #8b0000; font-size: 1.8rem; letter-spacing: 12px; font-weight: bold; }
 
-        /* 恐怖圖片區塊：加入極度陰沉的台式恐怖濾鏡 */
+        /* 恐怖圖片區塊：調高對比度，凸顯中式血紅感 */
         .image-container {
             width: 100%;
-            height: 280px;
+            height: 320px;
             background-color: #000;
             margin-bottom: 20px;
-            border: 1px solid #3a0202;
+            border: 2px solid #7a0b0b;
             overflow: hidden;
             display: none; /* 有圖片時由 JS 顯示 */
         }
         .scene-img {
             width: 100%; height: 100%; object-fit: cover;
-            /* 還願式陰間濾鏡：高對比、黃綠腐敗感、暗紅 */
-            filter: sepia(60%) contrast(150%) brightness(35%) hue-rotate(-30deg);
+            /* 調整濾鏡，不讓圖片黑到看不見，而是呈現詭異的高對比血紅感 */
+            filter: contrast(130%) brightness(60%) saturate(140%);
         }
 
         .scene-title { color: #ff2222; font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 15px; font-weight: bold; }
@@ -94,7 +94,7 @@
         /* 特殊文本顏色 */
         .blood { color: #ff1111; font-weight: bold; text-shadow: 0 0 2px #000; }
         .whisper { color: #cc9933; font-style: italic; }
-        .scare-text { color: #ff3333; font-size: 1.15rem; font-weight: bold; animation: textShake 0.1s infinite; display: inline-block; }
+        .scare-text { color: #ff3333; font-size: 1.25rem; font-weight: bold; animation: textShake 0.1s infinite; display: inline-block; }
         @keyframes textShake {
             0% { transform: translate(1px, 1px) rotate(0deg); }
             100% { transform: translate(-1px, -1px) rotate(0deg); }
@@ -141,8 +141,8 @@
         room_start: {
             title: "第一章：【鎖上的乖女兒房】",
             icon: "心 神 專 一",
-            // 點題：暗沉老舊的書桌
-            img: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80",
+            // 初始房間圖片：老舊泛黃、帶有壓迫感的公寓房間一角
+            img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
             text: "凌晨一點。明天就是聯考。你剛想開門去裝水，卻發現鎖鏈扣死的聲音從門外傳來——<span class='blood'>爸爸又把你反鎖了。</span><br><br>客廳傳來刺鼻的紙錢燒焦味，伴隨爸爸壓低卻狂熱的呢喃：<br><span class='whisper'>「慈母降世...把婷婷身上不乾淨的業障都燒掉...這次一定能拿第一名...」</span><br>房間裡有一張書桌、貼滿黃符的鐵窗，以及散發霉味的老舊樟木衣櫃。",
             getChoices: () => {
                 let choices = [];
@@ -170,8 +170,8 @@
         action_cut_desk: {
             title: "【書桌：姐姐的遺物】",
             icon: "血 債 血 償",
-            // 插入圖片：凌亂充滿碎紙的陰暗抽屜
-            img: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80",
+            // 變更圖片：散落不明紙張、極度凌亂且陰暗的抽屜深處
+            img: "https://images.unsplash.com/photo-1588345921523-c2dce2a73dcd?auto=format&fit=crop&w=800&q=80",
             text: "你拿出美工刀用力劃開膠帶，刺耳的撕裂聲在深夜裡格外清晰。抽屜被拉開，裡面赫然躺著一本被揉爛的<span class='blood'>【姐姐的舊日記】</span>，以及一把沾著乾涸黑色血跡的<span class='blood'>【暗門鑰匙】</span>。",
             action: () => { gameState.deskCut = true; addItem("暗門鑰匙"); },
             getChoices: () => [
@@ -191,7 +191,7 @@
         action_read_diary: {
             title: "【姐姐的舊日記】",
             icon: "怨 氣 沖 天",
-            text: "日記字跡極度潦草：<br><i>「7月14日：媽媽生病後，爸爸帶回來一尊滿是眼睛的神像。他說那是靈慈母，能保佑我們家。」</i><br><i>「8月2日：不對勁...爸爸每天混在水裡給媽媽喝的不是藥，是香灰和骨灰！媽媽的皮膚開始發青、長斑...」</i><br><i>「8月15日：媽媽不見了。爸爸狂熱地笑著說媽媽功德圓滿了。今天，爸爸摸著我的頭笑：『接下來輪到你考大學，爸爸會加倍愛你...』。我發現了衣櫃後面的夾層，我要逃...」</i>",
+            text: "日記字跡極度潦草：<br><i>「7月14日：媽媽生病後，爸爸帶回來一尊滿是眼睛的神像。他說那是靈慈母，能保佑我們家。」</i><br><i>「8月2日：不對勁...爸爸每天混在水裡給媽媽喝的不是藥，是香灰和骨灰！媽媽的皮膚開始發青、長斑...」</i><br><i>「8月15日：媽媽不見了。爸爸狂熱地笑著說媽媽功功德圓滿了。今天，爸爸摸著我的頭笑：『接下來輪到你考大學，爸爸會加倍愛你...』。我發現了衣櫃後面的夾層，我要逃...」</i>",
             action: () => { gameState.hasReadDiary = true; },
             getChoices: () => [{ text: "闔上日記，全身發冷。退回房間", next: "room_start" }]
         },
@@ -211,8 +211,8 @@
         action_cut_window: {
             title: "【結局：墜落的解脫】",
             icon: "魂 歸 西 天",
-            // 插入圖片：深夜冰冷的窗框
-            img: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=800&q=80",
+            // 變更圖片：絕望的黑夜高空俯瞰水泥地
+            img: "https://images.unsplash.com/photo-1508873699372-7aeab60b44ab?auto=format&fit=crop&w=800&q=80",
             text: "你用鐵剪「喀擦」一聲剪斷了粗麻繩。鈴鐺爆發出刺耳的尖叫！然而繩子斷裂的瞬間，老舊的鐵窗整個向外脫落，你重心不穩，跟著鐵窗一起從二樓重重跌落到水泥地上...<br><br>模糊的視線中，你看到二樓窗門打開，爸爸抱著神像，淚流滿面地看著你：<span class='whisper'>「婷婷...外面的世界太髒了...你為什麼就是不聽話呢...別怕，爸爸這就帶你回家...」</span>",
             getChoices: () => [{ text: "（點擊重新輪迴）", next: "die_restart" }]
         },
@@ -240,12 +240,12 @@
             getChoices: () => [{ text: "握緊美工刀，退回房間", next: "room_start" }]
         },
 
-        // ================= 第二章（新增長篇劇情） =================
+        // ================= 第二章 =================
         stage_hallway: {
             title: "第二章：【腐敗的客廳與長廊】",
             icon: "全 家 皈 依",
-            // 插入圖片：密密麻麻點滿蠟燭的陰暗客廳一角
-            img: "https://images.unsplash.com/photo-1601513525393-4953e7c8d6c2?auto=format&fit=crop&w=800&q=80",
+            // 變更圖片：完全寫實的陰暗長廊，模擬老舊公寓死寂的走道
+            img: "https://images.unsplash.com/photo-1562673005-7693bd6d6e54?auto=format&fit=crop&w=800&q=80",
             text: "鑰匙轉動，鐵鍊滑落。你用力推開背板鑽了出來，卻發現這裡不是室外，而是家裡久未使用的陰暗後走廊。老舊的紅色磨石子地板上黏著一層滑膩的垢。<br><br>長廊的一頭是飄出詭異腥味的廚房，另一頭是散發著暗紅神明燈光的客廳。爸爸此時似乎在更深處的地下室念經，客廳空無一人。",
             getChoices: () => [
                 { text: "走向散發著暗紅神明燈光的客廳", next: "hallway_living" },
@@ -255,6 +255,8 @@
         hallway_living: {
             title: "【神明廳與藥罐】",
             icon: "心 誠 則 靈",
+            // 變更圖片：點滿蠟燭、散發血紅與不祥黃光的祭壇意象（絕配！）
+            img: "https://images.unsplash.com/photo-1601513525393-4953e7c8d6c2?auto=format&fit=crop&w=800&q=80",
             text: "客廳的神桌上，兩盞暗紅色的神明燈將牆壁照得像血一樣紅。神桌上沒有正神，只有一疊疊黃色符紙。桌上還散落著無數個白色藥罐。茶几上放著一碗倒好的、濁黑色的「聰明水」。",
             getChoices: () => {
                 let choices = [];
@@ -276,6 +278,8 @@
         hallway_kitchen: {
             title: "【廚房：濃稠的腥味】",
             icon: "聖 餐 奉 納",
+            // 變更圖片：陰暗、油膩、老舊公寓的廚房瓦斯爐景象
+            img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80",
             text: "廚房的天花板不斷往下滴著油膩的水滴。瓦斯爐上放著一個巨大的不鏽鋼湯鍋，湯鍋下方的火已經滅了，但鍋子還在冒著餘溫。裡面的湯極度濃稠，漂浮著一層黃色的油脂。",
             getChoices: () => {
                 let choices = [];
@@ -292,7 +296,7 @@
             icon: "骨 肉 相 殘",
             text: "你伸出顫抖的手掀開鍋蓋。濃烈的腥臭味撲面而來！<br><br>在混濁的湯汁裡，你看到幾塊被煮得皮肉分離的骨頭，而湯底沉澱著大量的黑色香灰。這根本不是豬肉湯。聯想到日記裡失蹤的媽媽，你的雙腿一軟，差點跪倒在地。爸爸每天逼你喝下的『神水』與『補湯』，究竟是用什麼燉出來的...？",
             action: () => { gameState.kitchenInvestigated = true; },
-            getChoices: () => [{ text: "捂住嘴巴不讓自己叫出來，逃離廚房", next: "hallway_kitchen" }]
+            getChoices: () => [{ text: "逃離廚房", next: "hallway_kitchen" }]
         },
 
         // ================= 第三章 =================
@@ -308,8 +312,8 @@
         altar_shrine: {
             title: "【神龕：靈慈母真容】",
             icon: "請 神 容易",
-            // 插入圖片：極度扭曲、滿是眼睛的黑青色神像
-            img: "https://images.unsplash.com/photo-1618083707368-b3823daa2726?auto=format&fit=crop&w=800&q=80",
+            // 變更圖片：暗紅與純黑交織、令人毛骨悚然的詭異雕像剪影（壓迫感極強！）
+            img: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=800&q=80",
             text: "你扯下紅布。一尊青銅鑄造、卻長著無數複眼、下半身滿是扭曲觸手的<span class='blood'>邪神像</span>赫然出現。祂的複眼在暗紅色的燭光下彷彿在微微蠕動。神像腳下的香爐裡，插著三根流著黑色液體的「肉香」。",
             getChoices: () => {
                 let choices = [];
@@ -339,17 +343,17 @@
         action_open_fridge: {
             title: "【冰櫃：瘋狂的家庭】",
             icon: "慈 母 悲 憫",
-            // 突發驚嚇視覺圖片：覆蓋黃符的黑青色軀體意象
-            img: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=800&q=80",
+            // 突發驚嚇視覺：高對比度、宛如犯罪現場、極度陰森的雪白冷凍庫內部（高能！）
+            img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
             text: "<span class='scare-text'>【！！！】</span>你猛地拉開冰櫃！一股極度腐敗的惡臭瞬間衝進你的鼻腔！<br><br>在慘白的凍霧中，你看到<span class='blood'>媽媽那具內臟被全部掏空、殘缺不全</span>的屍體正躺在裡面。她的額頭上被死死釘著一張黃符，而她乾枯發青的手裡，正死死握著一把用來剪符咒的<span class='blood'>【生鏽的鐵剪】</span>。",
-            scare: true, // 觸發閃動
+            scare: true, 
             action: () => { gameState.fridgeOpened = true; addItem("生鏽的鐵剪"); },
             getChoices: () => [
-                { text: "流著淚、強忍嘔吐感，從媽媽乾枯的手中奪下【生鏽的鐵剪】", next: "stage_altar_enter" }
+                { text: "從媽媽乾枯的手中奪下【生鏽的鐵剪】", next: "stage_altar_enter" }
             ]
         },
 
-        // ================= 第四章（最終決抉擇） =================
+        // ================= 第四章 =================
         stage_final_escape: {
             title: "第四章：【以愛為名的終點】",
             icon: "合 家 團 圓",
@@ -359,21 +363,23 @@
                 if (gameState.inventory.includes("生鏽的鐵剪")) {
                     choices.push({ text: "【逃跑】用【生鏽的鐵剪】瘋狂撬動通往後巷鐵門的生鏽鎖舌", next: "end_true" });
                 }
-                choices.push({ text: "【反抗】雙手舉起沉重的青銅邪神像，躲在暗處準備砸向爸爸", next: "end_bad" });
+                choices.push({ text: "【反抗】雙手舉起沉重的青銅邪神像，準備砸向爸爸", next: "end_bad" });
                 return choices;
             }
         },
         end_true: {
             title: "真實結局：【清晨的雨水】",
             icon: "逃 出 生 天",
-            img: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&w=800&q=80",
+            // 變更圖片：深夜狂暴大雨中無人的幽暗防火巷街道（絕望解脫感）
+            img: "https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?auto=format&fit=crop&w=800&q=80",
             text: "背後傳來爸爸狂暴的腳步聲。你哭著將【生鏽的鐵剪】死命卡進鐵門鎖縫中，全身重量壓上去瘋狂攪動！<br><br>「蹦！」鎖舌斷裂。你推開鐵門，跌進了外頭深夜冰冷的暴雨中。你在黑暗的防火巷裡拼命狂奔，背後傳來爸爸絕望的哭喊聲，直到你看到遠處路口巡邏警車的藍紅燈光...<br><br>你活了下來。你拒絕去參加隔天的聯考，也切斷了過去所有的聯絡。很多年後，每當有人面帶微笑對你說出<span class='blood'>「我是為你好」</span>時，你依然會驚恐得全身停止不下來地發抖。那種愛，真的會吃人。",
             getChoices: () => [{ text: "（因果未了，再次墮入輪迴）", next: "die_restart" }]
         },
         end_bad: {
             title: "毀滅結局：【完美的乖女兒】",
             icon: "全 家 團 聚",
-            img: "https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=800&q=80",
+            // 變更圖片：死寂、灰暗、毫無生氣的黑白扭曲人影意象
+            img: "https://images.unsplash.com/photo-1502481851512-e9e2529beff5?auto=format&fit=crop&w=800&q=80",
             text: "你雙手舉起神像。當那道高大的身影衝進來時，你尖叫著砸下去。但重度藥物中毒、精神衰弱的你根本沒有力氣，神像被一把奪走。<br><br>爸爸看著滿地狼藉與大開的冰櫃，雙眼佈滿血絲，流下了痛心的眼淚：<span class='parent-voice'>「婷婷，你怎麼就是不懂爸爸的苦心？爸爸做這一切，都是為了你的前途、為了我們這個家啊！」</span><br><br>你被死死按在地上。幾天後，村子裡多了一位成績永遠全校第一、眼神空洞、身體冰冷如石、從不開口說話的「完美女學生」。",
             getChoices: () => [{ text: "（因果未了，再次墮入輪迴）", next: "die_restart" }]
         },
