@@ -64,6 +64,33 @@
         .ritual-banner::after { right: 30px; }
         .banner-icon { color: #8b0000; font-size: 1.8rem; letter-spacing: 12px; font-weight: bold; }
 
+        /* 恐怖圖片區塊 */
+        .image-container {
+            width: 100%;
+            height: 380px;
+            background-color: #000;
+            margin-bottom: 20px;
+            border: 2px solid #7a0b0b;
+            overflow: hidden;
+            display: none;
+            position: relative;
+        }
+        .scene-img {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: contrast(130%) brightness(60%) saturate(140%);
+            transition: transform 0.1s ease;
+        }
+
+        /* Jump Scare 圖片突進與震動 */
+        .scare-image-effect {
+            filter: none !important;
+            animation: imageShock 0.05s infinite alternate !important;
+        }
+        @keyframes imageShock {
+            0% { transform: scale(1.25) translate(3px, 3px) rotate(0.5deg); }
+            100% { transform: scale(1.25) translate(-3px, -3px) rotate(-0.5deg); }
+        }
+
         .scene-title { color: #ff2222; font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 15px; font-weight: bold; }
         .inventory-title { font-size: 0.8rem; color: #cc9933; margin-top: 10px; letter-spacing: 2px; }
         
@@ -100,6 +127,10 @@
     <div class="game-window">
         <div class="ritual-banner"><div id="banner-text" class="banner-icon">卍 靈 慈 卍</div></div>
         <div id="stage-title" class="scene-title"></div>
+        
+        <div id="image-area" class="image-container">
+            <img id="scene-image" src="" alt="恐怖場景" class="scene-img">
+        </div>
 
         <div class="inventory-title">🎒 隨身攜帶的物件：</div>
         <div id="inventory" class="inventory-box"></div>
@@ -285,7 +316,7 @@
         altar_shrine: {
             title: "【神龕：靈慈母真容】",
             icon: "請 神 容易",
-            text: "你扯下紅布。一尊青銅鑄造、卻長著無數複眼、下半身滿是扭曲觸手的<span class='blood'>邪神像</span>赫然出現。祂的複眼在暗紅色的燭光下彷彿在微微蠕動。神像腳下的香爐裡，插著三根流著黑色液體之「肉香」。",
+            text: "你扯下紅布。一尊青銅鑄造、卻長著無數複眼、下半身滿是扭曲觸手的<span class='blood'>邪神像</span>赫然出現。祂的複眼在暗紅色的燭光下彷彿在微微蠕動。神像腳下的香爐裡，插著三根流著黑色液體的「肉香」。",
             getChoices: () => {
                 let choices = [];
                 if (gameState.hasReadDiary && gameState.fridgeOpened && gameState.kitchenInvestigated && gameState.pillsChecked) {
@@ -314,6 +345,8 @@
         action_open_fridge: {
             title: "【冰櫃：瘋狂的家庭】",
             icon: "慈 母 悲 憫",
+            /* 📸 僅在此處插入指定的媽媽圖片 */
+            img: "7eb95911-be11-4e9d-8cac-ad04bfc92a34.png",
             text: "<span class='scare-text'>【！！！】</span>你猛地拉開冰櫃！一股極度腐敗的惡臭與陰冷的白霧瞬間衝擊你的臉頰！<br><br>在慘白的凍霧與層層疊疊的黃符後方，<span class='blood'>媽媽那尊毫無生氣、雙眼死寂的身影竟然直挺挺地站在冰櫃深處</span>，一動不動地盯著你！背後的神壇散發著詭異的紅光。而在她乾枯發青、佈滿冰霜的手裡，正死死握著一把用來剪符咒的<span class='blood'>【生鏽的鐵剪】</span>。",
             scare: true,
             action: () => { 
@@ -342,7 +375,7 @@
         end_true: {
             title: "真實結局：【清晨的雨水】",
             icon: "逃 出 生 天",
-            text: "背後傳來爸爸狂暴的腳步聲。你哭著將【生鏽的鐵剪】死命卡進鐵門鎖縫中，全身重量壓上去瘋狂攪動！<br><br>「蹦！」鎖舌斷裂。你推開鐵門，跌進了外頭深夜冰冷的暴雨中。你在黑暗的防火巷裡拼命狂奔，背後傳來爸爸絕望的哭喊聲，直到你看到遠處路口巡邏警車的藍紅燈光...<br><br>你活了檔案。你拒絕去參加隔天的聯考，也切斷了過去所有的聯絡。很多年後，每當有人面帶微笑對你說出<span class='blood'>「我是為你好」</span>時，你依然會驚恐得全身停止不下來地發抖。那種愛，真的會吃人。",
+            text: "背後傳來爸爸狂暴的腳步聲。你哭著將【生鏽的鐵剪】死命卡進鐵門鎖縫中，全身重量壓上去瘋狂攪動！<br><br>「蹦！」鎖舌斷裂。你推開鐵門，跌進了外頭深夜冰冷的暴雨中。你在黑暗的防火巷裡拼命狂奔，背後傳來爸爸絕望的哭喊聲，直到你看到遠處路口巡邏警車的藍紅燈光...<br><br>你活了下來。你拒絕去參加隔天的聯考，也切斷了過去所有的聯絡。很多年後，每當有人面帶微笑對你說出<span class='blood'>「我是為你好」</span>時，你依然會驚恐得全身停止不下來地發抖。那種愛，真的會吃人。",
             getChoices: () => [{ text: "（因果未了，再次墮入輪迴）", next: "die_restart" }]
         },
         end_bad: {
@@ -389,16 +422,31 @@
         
         if (scene.action) scene.action();
 
-        // 清理上一次的 Jump Scare 全螢幕閃爍樣式
-        document.body.classList.remove('scare-flash');
+        const imgArea = document.getElementById('image-area');
+        const imgTag = document.getElementById('scene-image');
 
-        // 觸發 Jump Scare 紅黑全螢幕閃爍特效
+        // 清理上一次的 Jump Scare 樣式
+        document.body.classList.remove('scare-flash');
+        imgTag.classList.remove('scare-image-effect');
+
+        // 觸發 Jump Scare 特效
         if (scene.scare) {
             document.body.classList.add('scare-flash');
+            imgTag.classList.add('scare-image-effect');
             
             setTimeout(() => {
                 document.body.classList.remove('scare-flash');
+                imgTag.classList.remove('scare-image-effect');
+                imgTag.style.filter = "none";
             }, 400);
+        }
+
+        // 圖片控制（只有當場景有定義 img 欄位時才顯示）
+        if (scene.img) {
+            imgTag.src = scene.img;
+            imgArea.style.display = 'block';
+        } else {
+            imgArea.style.display = 'none';
         }
 
         document.getElementById('banner-text').innerText = scene.icon;
