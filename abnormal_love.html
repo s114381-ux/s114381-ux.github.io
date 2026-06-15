@@ -25,7 +25,7 @@
             100% { background: radial-gradient(circle, #450202 10%, #080000 100%); }
         }
 
-        /* 【核心特效】驚嚇全螢幕紅黑閃爍 */
+        /* 驚嚇全螢幕紅黑閃爍 */
         .scare-flash { animation: glitch 0.1s infinite !important; }
         @keyframes glitch {
             0% { background: #ff0000; opacity: 0.9; }
@@ -67,7 +67,7 @@
         /* 恐怖圖片區塊 */
         .image-container {
             width: 100%;
-            height: 380px; /* 稍微拉高，讓媽媽的半身像更具壓迫感 */
+            height: 380px;
             background-color: #000;
             margin-bottom: 20px;
             border: 2px solid #7a0b0b;
@@ -77,14 +77,13 @@
         }
         .scene-img {
             width: 100%; height: 100%; object-fit: cover;
-            /* 預設場景圖片濾鏡：泛黃暗沉 */
             filter: contrast(130%) brightness(60%) saturate(140%);
             transition: transform 0.1s ease;
         }
 
-        /* 【核心特效】Jump Scare 圖片突進與震動 */
+        /* Jump Scare 圖片突進與震動 */
         .scare-image-effect {
-            filter: none !important; /* 移除暗色濾鏡，讓媽媽的臉瞬間清晰放大 */
+            filter: none !important;
             animation: imageShock 0.05s infinite alternate !important;
         }
         @keyframes imageShock {
@@ -130,7 +129,6 @@
         <div id="stage-title" class="scene-title"></div>
         
         <div id="image-area" class="image-container">
-            <!-- 初始場景圖標籤 -->
             <img id="scene-image" src="" alt="恐怖場景" class="scene-img">
         </div>
 
@@ -354,10 +352,10 @@
         action_open_fridge: {
             title: "【冰櫃：瘋狂的家庭】",
             icon: "慈 母 悲 憫",
-            /* 💥 在這裡置入媽媽的原圖 */
+            /* 僅置入你提供的指定圖片 */
             img: "7eb95911-be11-4e9d-8cac-ad04bfc92a34.png",
             text: "<span class='scare-text'>【！！！】</span>你猛地拉開冰櫃！一股極度腐敗的惡臭與陰冷的白霧瞬間衝擊你的臉頰！<br><br>在慘白的凍霧與層層疊疊的黃符後方，<span class='blood'>媽媽那尊毫無生氣、雙眼死寂的身影竟然直挺挺地站在冰櫃深處</span>，一動不動地盯著你！背後的神壇散發著詭異的紅光。而在她乾枯發青、佈滿冰霜的手裡，正死死握著一把用來剪符咒的<span class='blood'>【生鏽的鐵剪】</span>。",
-            scare: true, // 觸發 Jump Scare
+            scare: true,
             action: () => { 
                 gameState.fridgeOpened = true; 
                 addItem("生鏽的鐵剪"); 
@@ -445,11 +443,10 @@
             document.body.classList.add('scare-flash');
             imgTag.classList.add('scare-image-effect');
             
-            // 0.4 秒後停止畫面閃爍與震動，讓玩家看清畫面
             setTimeout(() => {
                 document.body.classList.remove('scare-flash');
                 imgTag.classList.remove('scare-image-effect');
-                imgTag.style.filter = "none"; // 保持媽媽圖片的原始清晰度
+                imgTag.style.filter = "none";
             }, 400);
         }
 
@@ -486,6 +483,4 @@
 
 </body>
 </html>
-
-
 
