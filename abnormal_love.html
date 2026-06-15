@@ -25,12 +25,12 @@
             100% { background: radial-gradient(circle, #450202 10%, #080000 100%); }
         }
 
-        /* 驚嚇全螢幕紅黑閃爍 */
-        .scare-flash { animation: glitch 0.1s infinite !important; }
+        /* 驚嚇全螢幕閃爍 */
+        .scare-flash { animation: glitch 0.2s infinite !important; }
         @keyframes glitch {
             0% { background: #ff0000; opacity: 0.9; }
             50% { background: #000000; opacity: 1; }
-            100% { background: #5a0000; }
+            100% { background: #7a0000; }
         }
 
         .game-window {
@@ -64,31 +64,20 @@
         .ritual-banner::after { right: 30px; }
         .banner-icon { color: #8b0000; font-size: 1.8rem; letter-spacing: 12px; font-weight: bold; }
 
-        /* 恐怖圖片區塊 */
+        /* 恐怖圖片區塊：調高對比度，凸顯中式血紅感 */
         .image-container {
             width: 100%;
-            height: 550px;
+            height: 320px;
             background-color: #000;
             margin-bottom: 20px;
             border: 2px solid #7a0b0b;
             overflow: hidden;
-            display: none;
-            position: relative;
+            display: none; /* 有圖片時由 JS 顯示 */
         }
         .scene-img {
             width: 100%; height: 100%; object-fit: cover;
-            filter: contrast(110%) brightness(70%);
-            transition: transform 0.1s ease;
-        }
-
-        /* Jump Scare 圖片突進與震動 */
-        .scare-image-effect {
-            filter: none !important;
-            animation: imageShock 0.05s infinite alternate !important;
-        }
-        @keyframes imageShock {
-            0% { transform: scale(1.15) translate(2px, 2px); }
-            100% { transform: scale(1.15) translate(-2px, -2px); }
+            /* 調整濾鏡，不讓圖片黑到看不見，而是呈現詭異的高對比血紅感 */
+            filter: contrast(130%) brightness(60%) saturate(140%);
         }
 
         .scene-title { color: #ff2222; font-size: 1.2rem; letter-spacing: 3px; margin-bottom: 15px; font-weight: bold; }
@@ -105,12 +94,10 @@
         /* 特殊文本顏色 */
         .blood { color: #ff1111; font-weight: bold; text-shadow: 0 0 2px #000; }
         .whisper { color: #cc9933; font-style: italic; }
-        .parent-voice { color: #e6a100; font-weight: bold; }
         .scare-text { color: #ff3333; font-size: 1.25rem; font-weight: bold; animation: textShake 0.1s infinite; display: inline-block; }
-        
         @keyframes textShake {
-            0% { transform: translate(1px, 1px); }
-            100% { transform: translate(-1px, -1px); }
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            100% { transform: translate(-1px, -1px) rotate(0deg); }
         }
 
         .options-group { display: flex; flex-direction: column; gap: 12px; }
@@ -119,7 +106,6 @@
             padding: 13px 16px; font-size: 0.95rem; font-family: inherit; cursor: pointer; text-align: left; transition: all 0.2s;
         }
         .btn-choice:hover { background: #5c0505; color: #fff; box-shadow: 0 0 15px rgba(255,0,0,0.4); }
-        .system { color: #666; font-style: italic; }
     </style>
 </head>
 <body>
@@ -128,7 +114,7 @@
         <div class="ritual-banner"><div id="banner-text" class="banner-icon">卍 靈 慈 卍</div></div>
         <div id="stage-title" class="scene-title"></div>
         
-        <!-- 圖片顯示區域 -->
+        <!-- 核心恐怖圖片置放點 -->
         <div id="image-area" class="image-container">
             <img id="scene-image" src="" alt="恐怖場景" class="scene-img">
         </div>
@@ -143,8 +129,11 @@
 <script>
     let gameState = {
         inventory: [],
+        hasReadDiary: false,
         fridgeOpened: false,
-        deskCut: false
+        deskCut: false,
+        kitchenInvestigated: false,
+        pillsChecked: false
     };
 
     const script = {
@@ -152,6 +141,8 @@
         room_start: {
             title: "第一章：【鎖上的乖女兒房】",
             icon: "心 神 專 一",
+            // 初始房間圖片：老舊泛黃、帶有壓迫感的公寓房間一角
+            img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=800&q=80",
             text: "凌晨一點。明天就是聯考。你剛想開門去裝水，卻發現鎖鏈扣死的聲音從門外傳來——<span class='blood'>爸爸又把你反鎖了。</span><br><br>客廳傳來刺鼻的紙錢燒焦味，伴隨爸爸壓低卻狂熱的呢喃：<br><span class='whisper'>「慈母降世...把婷婷身上不乾淨的業障都燒掉...這次一定能拿第一名...」</span><br>房間裡有一張書桌、貼滿黃符的鐵窗，以及散發霉味的老舊樟木衣櫃。",
             getChoices: () => {
                 let choices = [];
@@ -179,6 +170,8 @@
         action_cut_desk: {
             title: "【書桌：姐姐的遺物】",
             icon: "血 債 血 償",
+            // 變更圖片：散落不明紙張、極度凌亂且陰暗的抽屜深處
+            img: "https://images.unsplash.com/photo-1588345921523-c2dce2a73dcd?auto=format&fit=crop&w=800&q=80",
             text: "你拿出美工刀用力劃開膠帶，刺耳的撕裂聲在深夜裡格外清晰。抽屜被拉開，裡面赫然躺著一本被揉爛的<span class='blood'>【姐姐的舊日記】</span>，以及一把沾著乾涸黑色血跡的<span class='blood'>【暗門鑰匙】</span>。",
             action: () => { gameState.deskCut = true; addItem("暗門鑰匙"); },
             getChoices: () => [
@@ -199,6 +192,7 @@
             title: "【姐姐的舊日記】",
             icon: "怨 氣 沖 天",
             text: "日記字跡極度潦草：<br><i>「7月14日：媽媽生病後，爸爸帶回來一尊滿是眼睛的神像。他說那是靈慈母，能保佑我們家。」</i><br><i>「8月2日：不對勁...爸爸每天混在水裡給媽媽喝的不是藥，是香灰和骨灰！媽媽的皮膚開始發青、長斑...」</i><br><i>「8月15日：媽媽不見了。爸爸狂熱地笑著說媽媽功功德圓滿了。今天，爸爸摸著我的頭笑：『接下來輪到你考大學，爸爸會加倍愛你...』。我發現了衣櫃後面的夾層，我要逃...」</i>",
+            action: () => { gameState.hasReadDiary = true; },
             getChoices: () => [{ text: "闔上日記，全身發冷。退回房間", next: "room_start" }]
         },
         room_window: {
@@ -217,6 +211,8 @@
         action_cut_window: {
             title: "【結局：墜落的解脫】",
             icon: "魂 歸 西 天",
+            // 變更圖片：絕望的黑夜高空俯瞰水泥地
+            img: "https://images.unsplash.com/photo-1508873699372-7aeab60b44ab?auto=format&fit=crop&w=800&q=80",
             text: "你用鐵剪「喀擦」一聲剪斷了粗麻繩。鈴鐺爆發出刺耳的尖叫！然而繩子斷裂的瞬間，老舊的鐵窗整個向外脫落，你重心不穩，跟著鐵窗一起從二樓重重跌落到水泥地上...<br><br>模糊的視線中，你看到二樓窗門打開，爸爸抱著神像，淚流滿面地看著你：<span class='whisper'>「婷婷...外面的世界太髒了...你為什麼就是不聽話呢...別怕，爸爸這就帶你回家...」</span>",
             getChoices: () => [{ text: "（點擊重新輪迴）", next: "die_restart" }]
         },
@@ -248,6 +244,8 @@
         stage_hallway: {
             title: "第二章：【腐敗的客廳與長廊】",
             icon: "全 家 皈 依",
+            // 變更圖片：完全寫實的陰暗長廊，模擬老舊公寓死寂的走道
+            img: "https://images.unsplash.com/photo-1562673005-7693bd6d6e54?auto=format&fit=crop&w=800&q=80",
             text: "鑰匙轉動，鐵鍊滑落。你用力推開背板鑽了出來，卻發現這裡不是室外，而是家裡久未使用的陰暗後走廊。老舊的紅色磨石子地板上黏著一層滑膩的垢。<br><br>長廊的一頭是飄出詭異腥味的廚房，另一頭是散發著暗紅神明燈光的客廳。爸爸此時似乎在更深處的地下室念經，客廳空無一人。",
             getChoices: () => [
                 { text: "走向散發著暗紅神明燈光的客廳", next: "hallway_living" },
@@ -257,20 +255,48 @@
         hallway_living: {
             title: "【神明廳與藥罐】",
             icon: "心 誠 則 靈",
-            text: "客廳的神桌上，兩盞暗紅色的神明燈將牆壁照得像血一樣紅。神桌上沒有正神，只有一疊疊黃色符紙。桌上還散落著無數個白色藥罐。茶几上放著一碗倒好的、濁黑色的「聰明水」。<br><br><span class='blood'>【檢查藥罐】</span>：標籤被撕掉了，但粉末聞起來是一股刺鼻的老鼠藥與重度安眠藥怪味！爸爸一直在對你下毒。",
-            getChoices: () => [
-                { text: "轉身走向陰暗的廚房", next: "hallway_kitchen" },
-                { text: "走向走廊盡頭，那扇通往地下密室的沉重木門", next: "stage_altar_enter" }
-            ]
+            // 變更圖片：點滿蠟燭、散發血紅與不祥黃光的祭壇意象（絕配！）
+            img: "https://images.unsplash.com/photo-1601513525393-4953e7c8d6c2?auto=format&fit=crop&w=800&q=80",
+            text: "客廳的神桌上，兩盞暗紅色的神明燈將牆壁照得像血一樣紅。神桌上沒有正神，只有一疊疊黃色符紙。桌上還散落著無數個白色藥罐。茶几上放著一碗倒好的、濁黑色的「聰明水」。",
+            getChoices: () => {
+                let choices = [];
+                if (!gameState.pillsChecked) {
+                    choices.push({ text: "仔細檢查神桌上的那些白色藥罐", next: "action_check_pills" });
+                }
+                choices.push({ text: "轉身走向陰暗的廚房", next: "hallway_kitchen" });
+                choices.push({ text: "走向走廊盡頭，那扇通往地下密室的沉重木門", next: "stage_altar_enter" });
+                return choices;
+            }
+        },
+        action_check_pills: {
+            title: "【藥罐的殘酷真相】",
+            icon: "無 藥 可 醫",
+            text: "你拿起那些藥罐。標籤早就被爸爸撕掉了，但你倒出裡面的粉末，卻聞到了一股刺鼻的、混雜了<span class='blood'>老鼠藥與重度安眠藥</span>的怪味。<br><br>你頓時感到一陣反胃——原來你每天喝的、讓你頭痛欲裂的「聰明神水」，根本就是慢性毒藥！爸爸為了讓你「聽話、專心唸書」，一直在對你下毒。",
+            action: () => { gameState.pillsChecked = true; },
+            getChoices: () => [{ text: "強忍住恐懼，退回客廳", next: "hallway_living" }]
         },
         hallway_kitchen: {
             title: "【廚房：濃稠的腥味】",
             icon: "聖 餐 奉 納",
-            text: "廚房的天花板不斷往下滴著油膩的水滴。瓦斯爐上放著一個巨大的不鏽鋼湯鍋。<br><br><span class='blood'>【檢查湯鍋】</span>：你掀開鍋蓋，濃烈腥臭撲鼻。混濁的湯汁裡漂浮著幾塊被煮得皮肉分離的骨頭，湯底沉澱著香灰。聯想到日記裡失蹤的媽媽...你全身發抖。",
-            getChoices: () => [
-                { text: "離開廚房，走向客廳", next: "hallway_living" },
-                { text: "走向通往地下密室的沉重木門", next: "stage_altar_enter" }
-            ]
+            // 變更圖片：陰暗、油膩、老舊公寓的廚房瓦斯爐景象
+            img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=800&q=80",
+            text: "廚房的天花板不斷往下滴著油膩的水滴。瓦斯爐上放著一個巨大的不鏽鋼湯鍋，湯鍋下方的火已經滅了，但鍋子還在冒著餘溫。裡面的湯極度濃稠，漂浮著一層黃色的油脂。",
+            getChoices: () => {
+                let choices = [];
+                if (!gameState.kitchenInvestigated) {
+                    choices.push({ text: "鼓起勇氣，掀開不鏽鋼湯鍋的蓋子", next: "action_check_pot" });
+                }
+                choices.push({ text: "離開廚房，走向客廳", next: "hallway_living" });
+                choices.push({ text: "走向通往地下密室的沉重木門", next: "stage_altar_enter" });
+                return choices;
+            }
+        },
+        action_check_pot: {
+            title: "【湯鍋裡的秘密】",
+            icon: "骨 肉 相 殘",
+            text: "你伸出顫抖的手掀開鍋蓋。濃烈的腥臭味撲面而來！<br><br>在混濁的湯汁裡，你看到幾塊被煮得皮肉分離的骨頭，而湯底沉澱著大量的黑色香灰。這根本不是豬肉湯。聯想到日記裡失蹤的媽媽，你的雙腿一軟，差點跪倒在地。爸爸每天逼你喝下的『神水』與『補湯』，究竟是用什麼燉出來的...？",
+            action: () => { gameState.kitchenInvestigated = true; },
+            getChoices: () => [{ text: "逃離廚房", next: "hallway_kitchen" }]
         },
 
         // ================= 第三章 =================
@@ -286,13 +312,15 @@
         altar_shrine: {
             title: "【神龕：靈慈母真容】",
             icon: "請 神 容易",
+            // 變更圖片：暗紅與純黑交織、令人毛骨悚然的詭異雕像剪影（壓迫感極強！）
+            img: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=800&q=80",
             text: "你扯下紅布。一尊青銅鑄造、卻長著無數複眼、下半身滿是扭曲觸手的<span class='blood'>邪神像</span>赫然出現。祂的複眼在暗紅色的燭光下彷彿在微微蠕動。神像腳下的香爐裡，插著三根流著黑色液體的「肉香」。",
             getChoices: () => {
                 let choices = [];
-                if (gameState.inventory.includes("生鏽的鐵剪")) {
+                if (gameState.hasReadDiary && gameState.fridgeOpened && gameState.kitchenInvestigated && gameState.pillsChecked) {
                     choices.push({ text: "【明白全盤真相】這裡太瘋狂了，立刻逃跑！", next: "stage_final_escape" });
                 } else {
-                    choices.push({ text: "這尊神像在盯著你...驚恐地退回地下室中央（你必須先去檢查旁邊的冰櫃）", next: "stage_altar_enter" });
+                    choices.push({ text: "這尊神像在盯著你...驚恐地退回地下室中央", next: "stage_altar_enter" });
                 }
                 return choices;
             }
@@ -306,7 +334,7 @@
                 if (!gameState.fridgeOpened) {
                     choices.push({ text: "屏住呼吸，使勁拉開冰櫃大門", next: "action_open_fridge" });
                 } else {
-                    choices.push({ text: "冰櫃已經打開，裡面站著媽媽...", next: "action_open_fridge" });
+                    choices.push({ text: "冰櫃已經打開，裡面躺著...", next: "action_open_fridge" });
                 }
                 choices.push({ text: "遠離冰櫃，退回中央", next: "stage_altar_enter" });
                 return choices;
@@ -315,16 +343,13 @@
         action_open_fridge: {
             title: "【冰櫃：瘋狂的家庭】",
             icon: "慈 母 悲 憫",
-            /* 📸 直接讀取環境內的指定圖片檔案 */
-            img: "7eb95911-be11-4e9d-8cac-ad04bfc92a34_2.png",
-            text: "<span class='scare-text'>【！！！】</span>你猛地拉開冰櫃！一股極度腐敗的惡臭與陰冷的白霧瞬間衝擊你的臉頰！<br><br>在慘白的凍霧與層層疊疊的黃符後方，<span class='blood'>媽媽那尊毫無生氣、雙眼死寂的身影竟然直挺挺地站在冰櫃深處</span>，一動不動地盯著你！背後的神壇散發著詭異的紅光。而在她乾枯發青、佈滿冰霜的手裡，正死死握著一把用來剪符咒的<span class='blood'>【生鏽的鐵剪】</span>。",
-            scare: true,
-            action: () => { 
-                gameState.fridgeOpened = true; 
-                addItem("生鏽的鐵剪"); 
-            },
+            // 突發驚嚇視覺：高對比度、宛如犯罪現場、極度陰森的雪白冷凍庫內部（高能！）
+            img: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=800&q=80",
+            text: "<span class='scare-text'>【！！！】</span>你猛地拉開冰櫃！一股極度腐敗的惡臭瞬間衝進你的鼻腔！<br><br>在慘白的凍霧中，你看到<span class='blood'>媽媽那具內臟被全部掏空、殘缺不全</span>的屍體正躺在裡面。她的額頭上被死死釘著一張黃符，而她乾枯發青的手裡，正死死握著一把用來剪符咒的<span class='blood'>【生鏽的鐵剪】</span>。",
+            scare: true, 
+            action: () => { gameState.fridgeOpened = true; addItem("生鏽的鐵剪"); },
             getChoices: () => [
-                { text: "頂著極度恐懼，從媽媽乾枯的手中奪下【生鏽的鐵剪】並前往神龕尋求出口", next: "altar_shrine" }
+                { text: "從媽媽乾枯的手中奪下【生鏽的鐵剪】", next: "stage_altar_enter" }
             ]
         },
 
@@ -345,12 +370,16 @@
         end_true: {
             title: "真實結局：【清晨的雨水】",
             icon: "逃 出 生 天",
+            // 變更圖片：深夜狂暴大雨中無人的幽暗防火巷街道（絕望解脫感）
+            img: "https://images.unsplash.com/photo-1428908728789-d2de25dbd4e2?auto=format&fit=crop&w=800&q=80",
             text: "背後傳來爸爸狂暴的腳步聲。你哭著將【生鏽的鐵剪】死命卡進鐵門鎖縫中，全身重量壓上去瘋狂攪動！<br><br>「蹦！」鎖舌斷裂。你推開鐵門，跌進了外頭深夜冰冷的暴雨中。你在黑暗的防火巷裡拼命狂奔，背後傳來爸爸絕望的哭喊聲，直到你看到遠處路口巡邏警車的藍紅燈光...<br><br>你活了下來。你拒絕去參加隔天的聯考，也切斷了過去所有的聯絡。很多年後，每當有人面帶微笑對你說出<span class='blood'>「我是為你好」</span>時，你依然會驚恐得全身停止不下來地發抖。那種愛，真的會吃人。",
             getChoices: () => [{ text: "（因果未了，再次墮入輪迴）", next: "die_restart" }]
         },
         end_bad: {
             title: "毀滅結局：【完美的乖女兒】",
             icon: "全 家 團 聚",
+            // 變更圖片：死寂、灰暗、毫無生氣的黑白扭曲人影意象
+            img: "https://images.unsplash.com/photo-1502481851512-e9e2529beff5?auto=format&fit=crop&w=800&q=80",
             text: "你雙手舉起神像。當那道高大的身影衝進來時，你尖叫著砸下去。但重度藥物中毒、精神衰弱的你根本沒有力氣，神像被一把奪走。<br><br>爸爸看著滿地狼藉與大開的冰櫃，雙眼佈滿血絲，流下了痛心的眼淚：<span class='parent-voice'>「婷婷，你怎麼就是不懂爸爸的苦心？爸爸做這一切，都是為了你的前途、為了我們這個家啊！」</span><br><br>你被死死按在地上。幾天後，村子裡多了一位成績永遠全校第一、眼神空洞、身體冰冷如石、從不開口說話的「完美女學生」。",
             getChoices: () => [{ text: "（因果未了，再次墮入輪迴）", next: "die_restart" }]
         },
@@ -359,7 +388,7 @@
             icon: "卍 業 障 卍",
             text: "濃烈的香灰味在空氣中消散。你再次睜開眼睛，眼前依然是那盞嗡嗡作響、忽明忽暗的日光燈，以及桌上寫著你名字的聯考通知書...儀式，又重新開始了。",
             action: () => {
-                gameState = { inventory: [], fridgeOpened: false, deskCut: false };
+                gameState = { inventory: [], hasReadDiary: false, fridgeOpened: false, deskCut: false, kitchenInvestigated: false, pillsChecked: false };
             },
             getChoices: () => [{ text: "坐回書桌前...", next: "room_start" }]
         }
@@ -368,8 +397,8 @@
     function addItem(item) {
         if (!gameState.inventory.includes(item)) {
             gameState.inventory.push(item);
+            updateInventoryUI();
         }
-        updateInventoryUI();
     }
 
     function updateInventoryUI() {
@@ -389,28 +418,16 @@
 
     function renderScene(sceneKey) {
         const scene = script[sceneKey];
-        
         if (scene.action) scene.action();
 
-        const imgArea = document.getElementById('image-area');
-        const imgTag = document.getElementById('scene-image');
-
-        // 清理上一次的 Jump Scare 樣式
-        document.body.classList.remove('scare-flash');
-        imgTag.classList.remove('scare-image-effect');
-
-        // 觸發 Jump Scare 特效
         if (scene.scare) {
             document.body.classList.add('scare-flash');
-            imgTag.classList.add('scare-image-effect');
-            
-            setTimeout(() => {
-                document.body.classList.remove('scare-flash');
-                imgTag.classList.remove('scare-image-effect');
-            }, 500);
+            setTimeout(() => document.body.classList.remove('scare-flash'), 300);
         }
 
-        // 圖片控制（只有當場景有定義 img 欄位時才顯示）
+        // 圖片控制邏輯
+        const imgArea = document.getElementById('image-area');
+        const imgTag = document.getElementById('scene-image');
         if (scene.img) {
             imgTag.src = scene.img;
             imgArea.style.display = 'block';
@@ -437,9 +454,8 @@
         updateInventoryUI();
     }
 
-    // 啟動遊戲
     renderScene('room_start');
 </script>
 
 </body>
-</html>
+</html> 
